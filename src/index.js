@@ -8,13 +8,15 @@ function connect({host, port, path, secure, wsProtocols, wsBinaryType, db, simul
   // Temporarily unset process.browser so rethinkdb uses a TcpConnection
   const oldProcessDotBrowser = process.browser;
   process.browser = false;
-  if(user === undefined) {
-    user = 'default'
+  let _user = user;
+  let _password = password;
+  if (_user === undefined) {
+    _user = 'default'
   }
-  if(password === undefined) {
-    password = ''
+  if (_password === undefined) {
+    _password = ''
   }
-  const connectOptions = {host, port, db, user, password};
+  const connectOptions = {host, port, db, _user, _password};
   const connectionPromise = Promise.promisify(rethinkdb.connect)(connectOptions);
   process.browser = oldProcessDotBrowser;
   return connectionPromise;
