@@ -16,7 +16,7 @@ function connect({host, port, path, secure, wsProtocols, wsBinaryType, db, simul
   if (_password === undefined) {
     _password = ''
   }
-  const connectOptions = {host, port, db, _user, _password};
+  const connectOptions = {host, port, db, user: _user, password: _password};
   const connectionPromise = Promise.promisify(rethinkdb.connect)(connectOptions);
   process.browser = oldProcessDotBrowser;
   return connectionPromise;
