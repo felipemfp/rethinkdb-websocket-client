@@ -17,8 +17,6 @@ const notImpl = name => () => {
   throw new Error('Not implemented in TcpPolyfill: ' + name);
 };
 
-const packetReader = new PacketReader();
-
 export function configureTcpPolyfill(options) {
   tcpPolyfillOptions.path = options.path;
   tcpPolyfillOptions.secure = options.secure;
@@ -49,6 +47,7 @@ export function Socket(options) {
     const protocol = tcpPolyfillOptions.secure ? 'wss' : 'ws';
     const path = tcpPolyfillOptions.path;
     const url = `${protocol}://${host}:${port}${path}`;
+    const packetReader = new PacketReader();
     ws = new WebSocket(url, tcpPolyfillOptions.wsProtocols);
 
     if (tcpPolyfillOptions.wsBinaryType) {
