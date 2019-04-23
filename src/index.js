@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import rethinkdb from 'rethinkdb';
 import protodef from 'rethinkdb/proto-def';
-import {configureTcpPolyfill} from './TcpPolyfill';
+import {configureTcpPolyfill, setIsConnected} from './TcpPolyfill';
 
-function connect({host, port, path, secure, wsProtocols, wsBinaryType, db, simulatedLatencyMs, user, password}) {
-  configureTcpPolyfill({path, secure, wsProtocols, wsBinaryType, simulatedLatencyMs});
+function connect({host, port, path, secure, wsProtocols, wsBinaryType, db, simulatedLatencyMs, user, password, waitForPacket}) {
+  configureTcpPolyfill({path, secure, wsProtocols, wsBinaryType, simulatedLatencyMs, waitForPacket});
   // Temporarily unset process.browser so rethinkdb uses a TcpConnection
   const oldProcessDotBrowser = process.browser;
   process.browser = false;
@@ -19,7 +19,10 @@ function connect({host, port, path, secure, wsProtocols, wsBinaryType, db, simul
   const connectOptions = {host, port, db, user: _user, password: _password};
   const connectionPromise = Promise.promisify(rethinkdb.connect)(connectOptions);
   process.browser = oldProcessDotBrowser;
-  return connectionPromise;
+  return connectionPromise.then(connection => {
+    setIsConnected();
+    return connection;
+  });
 }
 
 const RethinkdbWebsocketClient = {

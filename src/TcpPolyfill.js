@@ -1,12 +1,16 @@
 import blobToBuffer from 'blob-to-buffer';
 import EventEmitter2 from 'eventemitter2';
 
+import PacketReader from './PacketReader';
+
 let tcpPolyfillOptions = {
   path: '/',
   secure: false,
   wsProtocols: undefined,
   wsBinaryType: undefined,
   simulatedLatencyMs: undefined,
+  waitForPacket: false,
+  isConnected: false,
 };
 
 const notImpl = name => () => {
@@ -19,6 +23,11 @@ export function configureTcpPolyfill(options) {
   tcpPolyfillOptions.wsProtocols = options.wsProtocols;
   tcpPolyfillOptions.wsBinaryType = options.wsBinaryType;
   tcpPolyfillOptions.simulatedLatencyMs = options.simulatedLatencyMs;
+  tcpPolyfillOptions.waitForPacket = options.waitForPacket;
+}
+
+export function setIsConnected() {
+  tcpPolyfillOptions.isConnected = true;
 }
 
 export function Socket(options) {
@@ -38,6 +47,7 @@ export function Socket(options) {
     const protocol = tcpPolyfillOptions.secure ? 'wss' : 'ws';
     const path = tcpPolyfillOptions.path;
     const url = `${protocol}://${host}:${port}${path}`;
+    const packetReader = new PacketReader();
     ws = new WebSocket(url, tcpPolyfillOptions.wsProtocols);
 
     if (tcpPolyfillOptions.wsBinaryType) {
@@ -99,6 +109,11 @@ export function Socket(options) {
 
       const handleBase64 = base64SetByWsClient || base64Workaround;
 
+      const shouldWaitForPacketComplete = (
+        tcpPolyfillOptions.waitForPacket &&
+        tcpPolyfillOptions.isConnected
+      );
+
       if (typeof Blob !== 'undefined' && data instanceof Blob) {
         blobToBuffer(data, (err, buffer) => {
           if (err) {
@@ -107,7 +122,17 @@ export function Socket(options) {
           emitter.emit('data', buffer);
         });
       } else if (typeof ArrayBuffer !== 'undefined' && data instanceof ArrayBuffer) {
-        emitter.emit('data', Buffer.from(data));
+        if (shouldWaitForPacketComplete) {
+          packetReader.addChunk(Buffer.from(data));
+          let packet = packetReader.read();
+
+          while (packet) {
+            emitter.emit('data', packet);
+            packet = packetReader.read();
+          }
+        } else {
+          emitter.emit('data', Buffer.from(data));
+        }
       } else if (handleBase64) {
         emitter.emit('data', new Buffer(data, 'base64'));
       } else {
