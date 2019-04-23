@@ -6204,8 +6204,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	};
 
-	var packetReader = new _PacketReader2['default']();
-
 	function configureTcpPolyfill(options) {
 	  tcpPolyfillOptions.path = options.path;
 	  tcpPolyfillOptions.secure = options.secure;
@@ -6238,6 +6236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var protocol = tcpPolyfillOptions.secure ? 'wss' : 'ws';
 	    var path = tcpPolyfillOptions.path;
 	    var url = protocol + '://' + host + ':' + port + path;
+	    var packetReader = new _PacketReader2['default']();
 	    ws = new WebSocket(url, tcpPolyfillOptions.wsProtocols);
 
 	    if (tcpPolyfillOptions.wsBinaryType) {
