@@ -122,6 +122,12 @@ export function Socket(options) {
           emitter.emit('data', buffer);
         });
       } else if (typeof ArrayBuffer !== 'undefined' && data instanceof ArrayBuffer) {
+        // Support force logout
+        // In order to not cause weird errors in RDB driver emit it as another topic 'logout'
+        if (data.byteLength === 6 && Buffer.from(data).toString() === 'logout') {
+          return emitter.emit('logout');
+        }
+
         if (shouldWaitForPacketComplete) {
           packetReader.addChunk(Buffer.from(data));
           let packet = packetReader.read();
