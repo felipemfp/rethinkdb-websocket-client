@@ -24,6 +24,7 @@ export function configureTcpPolyfill(options) {
   tcpPolyfillOptions.wsBinaryType = options.wsBinaryType;
   tcpPolyfillOptions.simulatedLatencyMs = options.simulatedLatencyMs;
   tcpPolyfillOptions.waitForPacket = options.waitForPacket;
+  tcpPolyfillOptions.isConnected = false;
 }
 
 export function setIsConnected() {

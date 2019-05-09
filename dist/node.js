@@ -6211,6 +6211,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  tcpPolyfillOptions.wsBinaryType = options.wsBinaryType;
 	  tcpPolyfillOptions.simulatedLatencyMs = options.simulatedLatencyMs;
 	  tcpPolyfillOptions.waitForPacket = options.waitForPacket;
+	  tcpPolyfillOptions.isConnected = false;
 	}
 
 	function setIsConnected() {
