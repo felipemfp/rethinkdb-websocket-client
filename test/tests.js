@@ -81,8 +81,10 @@ describe('RethinkdbWebsocketClient', () => {
     });
   });
 
-  it('should connect, issue a query, and receive a response', done => {
-    serverPromise.then(server => {
+  it('should connect, issue a query, and receive a response', function(done) {
+    this.timeout(5000);
+
+    return serverPromise.then(server => {
       const {address, port} = server._server.address();
       const connectOptions = {host: address, port, path, db};
       connect(connectOptions).then(conn => {

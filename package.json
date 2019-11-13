@@ -9,7 +9,7 @@
     "url": "https://github.com/mikemintz/rethinkdb-websocket-client.git"
   },
   "scripts": {
-    "test": "eslint test && mocha --compilers js:babel/register",
+    "test": "eslint test && mocha --compilers js:@babel/register",
     "prepublish": "webpack --config webpack/browser.config.js && webpack --config webpack/node.config.js"
   },
   "main": "dist/index.js",
@@ -19,20 +19,26 @@
   ],
   "dependencies": {
     "blob-to-buffer": "^1.2.3",
-    "bluebird": "^2.9.27",
     "eventemitter2": "^0.4.14",
-    "node-libs-browser": ">= 0.4.0 <=0.6.0",
-    "rethinkdb": "~2.3.3",
-    "ws": "^0.8.0"
+    "bluebird": "^2.9.27",
+    "rethinkdb": "~2.3.3"
   },
   "devDependencies": {
-    "babel": "^5.5.6",
-    "babel-core": "^5.5.6",
-    "babel-eslint": "^4.0.5",
-    "babel-loader": "^5.1.4",
-    "eslint": "^1.1.0",
-    "eslint-loader": "^1.0.0",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/register": "^7.7.0",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "eslint": "^6.6.0",
     "mocha": "^2.2.5",
-    "webpack": "^1.9.10"
+    "node-libs-browser": ">= 0.4.0 <=0.6.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "ws": "^7.2.0"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
   }
 }
