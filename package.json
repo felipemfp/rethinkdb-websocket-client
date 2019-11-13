@@ -34,10 +34,10 @@
     "node-libs-browser": ">= 0.4.0 <=0.6.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",
-    "ws": "^0.8.0"
+    "ws": "^3.3.1"
   },
   "peerDependencies": {
-    "ws": "^0.8.0"
+    "ws": "^3.3.1"
   },
   "babel": {
     "presets": [
