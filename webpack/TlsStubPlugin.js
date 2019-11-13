@@ -5,23 +5,24 @@
 // with TlsStub. This allows the rethinkdb driver to run in the browser, as
 // long as the ssl property is not set in r.connect().
 
-function TlsStubPlugin(contextPattern) {
-  this.contextPattern = contextPattern;
-}
+class TlsStubPlugin {
+  constructor(contextPattern) {
+    this.contextPattern = contextPattern;
+  }
 
-TlsStubPlugin.prototype.apply = function(compiler) {
-  var contextPattern = this.contextPattern;
-  compiler.plugin('normal-module-factory', function(nmf) {
-    nmf.plugin('before-resolve', function(result, callback) {
-      if (!result) return callback();
-      if (/^tls$/.test(result.request)) {
-        if (contextPattern.test(result.context)) {
-          result.request = __dirname + '/../src/TlsStub.js';
+  apply(compiler) {
+    const contextPattern = this.contextPattern;
+
+    compiler.hooks.normalModuleFactory.tap("TlsStubPlugin", function(nmf) {
+      nmf.hooks.beforeResolve.tap("TlsStubPlugin", function(result) {
+        if (/^tls$/.test(result.request)) {
+          if (contextPattern.test(result.context)) {
+            result.request = __dirname + "/../src/TlsStub.js";
+          }
         }
-      }
-      return callback(null, result);
+      });
     });
-  });
-};
+  }
+}
 
 module.exports = TlsStubPlugin;

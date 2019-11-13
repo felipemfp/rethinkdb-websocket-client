@@ -11,22 +11,17 @@ class TcpPolyfillPlugin {
   }
 
   apply(compiler) {
+    const contextPattern = this.contextPattern;
 
-    compiler.hooks.normalModuleFactory.tap("TcpPolyfill", (nmv) => {
-      
-      nmf.plugin("before-resolve", function(result, callback) {
-        if (!result) return callback();
-
+    compiler.hooks.normalModuleFactory.tap("TcpPolyfill", function(nmf) {
+      nmf.hooks.beforeResolve.tap("TcpPolyfill", function(result) {
         if (/^net$/.test(result.request)) {
           if (contextPattern.test(result.context)) {
             result.request = __dirname + "/../src/TcpPolyfill.js";
           }
         }
-
-        return callback(null, result);
       });
-
-    })
+    });
   }
 }
 
